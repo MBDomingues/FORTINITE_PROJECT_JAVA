@@ -1,4 +1,4 @@
-# 🎮 Fortnite Store - Desafio Técnico Full Stack
+# 🎮 Fortnite Store - Full Stack Technical Challenge
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
@@ -15,96 +15,96 @@
 ![Azure](https://img.shields.io/badge/azure-%230072C6.svg?style=for-the-badge&logo=microsoftazure&logoColor=white)
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 
-Aplicação Web Full Stack. O sistema simula uma loja virtual de cosméticos do jogo Fortnite, consumindo dados reais de uma API externa e gerenciando compras, créditos e usuários.
+Full Stack Web Application. The system simulates an online store for Fortnite cosmetics, consuming real data from an external API and managing purchases, credits and users.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Technologies Used
 
 ### Backend (API)
-* **Java 21 (LTS):** Linguagem base moderna e performática.
-* **Spring Boot 3:** Framework principal para injeção de dependência e web.
-* **Spring Security + JWT:** Autenticação e Autorização Stateless segura.
-* **Spring Data JPA (Hibernate):** Persistência de dados e ORM.
-* **Flyway:** Versionamento e migração segura de banco de dados.
-* **Oracle Database 21c XE:** Banco de dados relacional (rodando em container).
+* **Java 21 (LTS):** Modern, high-performance base language.
+* **Spring Boot 3:** Main framework for dependency injection and web.
+* **Spring Security + JWT:** Secure stateless Authentication and Authorization.
+* **Spring Data JPA (Hibernate):** Data persistence and ORM.
+* **Flyway:** Safe database versioning and migration.
+* **Oracle Database 21c XE:** Relational database (running in a container).
 
-### Frontend (Cliente)
-* **HTML5 & CSS3:** Estrutura semântica e estilização customizada.
-* **JavaScript (Vanilla ES6+):** Lógica do cliente, consumo de API (Fetch) e manipulação do DOM sem frameworks pesados.
-* **Bootstrap 5:** Framework CSS para responsividade ágil e componentes de UI.
-* **SweetAlert2:** Biblioteca para alertas, modais e pop-ups elegantes e responsivos (substituindo o `alert()` nativo).
+### Frontend (Client)
+* **HTML5 & CSS3:** Semantic structure and custom styling.
+* **JavaScript (Vanilla ES6+):** Client logic, API consumption (Fetch) and DOM manipulation without heavy frameworks.
+* **Bootstrap 5:** CSS framework for fast responsiveness and UI components.
+* **SweetAlert2:** Library for elegant, responsive alerts, modals and pop-ups (replacing the native `alert()`).
 
-### Infraestrutura & DevOps
-* **Docker & Docker Compose:** Orquestração dos serviços (App + Banco) garantindo o mesmo ambiente em dev e prod.
-* **Azure Virtual Machine (Linux Ubuntu):** Servidor de produção na nuvem.
-* **Nginx:** Servidor web de alto desempenho atuando como proxy reverso para o Frontend.
-
----
-
-## 💡 Decisões Técnicas Relevantes
-
-Durante o desenvolvimento, algumas decisões arquiteturais foram tomadas para garantir robustez e atender aos requisitos:
-
-1.  **Estratégia de "Race Condition" (Oracle vs API):**
-    * O banco Oracle em container demora para inicializar. Para evitar falhas na startup da API, foi implementado um mecanismo de `delay` assíncrono (`@Async`) no serviço de sincronização inicial e o uso de `depends_on` (healthchecks) no Docker Compose, garantindo que a aplicação só tente acessar o banco quando ele estiver 100% pronto.
-
-2.  **Sincronização de Dados (Cron):**
-    * Foi utilizado o `@Scheduled` do Spring para rodar uma tarefa automática a cada **1 hora**. Isso mantém a vitrine local sincronizada com a API oficial do Fortnite (que atualiza a loja diariamente), sem sobrecarregar o servidor externo a cada requisição de usuário.
-
-3.  **Arquitetura Híbrida no Deploy:**
-    * Para contornar restrições de *Mixed Content* (HTTPS vs HTTP) e CORS em ambientes de teste sem domínio SSL, optei por hospedar tanto o Frontend (via Nginx) quanto o Backend na mesma VM da Azure. Isso simplificou a rede, eliminou latência de conexão e garantiu que o sistema funcionasse de forma integrada.
-
-4.  **Flyway para Migrations:**
-    * Para garantir a integridade do schema do banco de dados (especialmente lidando com Oracle), desativei o `ddl-auto` do Hibernate e utilizei o **Flyway**. Isso garante que as tabelas (`TB_USUARIO`, `TB_COSMETICO`) sejam criadas de forma determinística e segura em qualquer ambiente.
+### Infrastructure & DevOps
+* **Docker & Docker Compose:** Service orchestration (App + Database) ensuring the same environment in dev and prod.
+* **Azure Virtual Machine (Linux Ubuntu):** Cloud production server.
+* **Nginx:** High-performance web server acting as a reverse proxy for the Frontend.
 
 ---
 
-## 💻 Como Rodar Localmente
+## 💡 Relevant Technical Decisions
 
-O projeto foi 100% dockerizado para facilitar a execução em qualquer máquina.
+During development, some architectural decisions were made to ensure robustness and meet the requirements:
 
-### Pré-requisitos
-* [Docker](https://www.docker.com/) e Docker Compose instalados.
+1.  **"Race Condition" Strategy (Oracle vs API):**
+    * The Oracle database in a container takes a while to start. To avoid failures during API startup, an asynchronous `delay` mechanism (`@Async`) was implemented in the initial synchronization service, along with `depends_on` (healthchecks) in Docker Compose, ensuring the application only tries to access the database when it is 100% ready.
+
+2.  **Data Synchronization (Cron):**
+    * Spring's `@Scheduled` was used to run an automatic task every **1 hour**. This keeps the local storefront in sync with the official Fortnite API (which updates the shop daily), without overloading the external server on every user request.
+
+3.  **Hybrid Deployment Architecture:**
+    * To work around *Mixed Content* (HTTPS vs HTTP) and CORS restrictions in test environments without an SSL domain, I chose to host both the Frontend (via Nginx) and the Backend on the same Azure VM. This simplified networking, eliminated connection latency and ensured the system worked in an integrated way.
+
+4.  **Flyway for Migrations:**
+    * To guarantee the integrity of the database schema (especially when dealing with Oracle), I disabled Hibernate's `ddl-auto` and used **Flyway**. This ensures the tables (`TB_USUARIO`, `TB_COSMETICO`) are created deterministically and safely in any environment.
+
+---
+
+## 💻 How to Run Locally
+
+The project is 100% dockerized to make it easy to run on any machine.
+
+### Prerequisites
+* [Docker](https://www.docker.com/) and Docker Compose installed.
 * Git.
 
-### Passo a Passo
+### Step by Step
 
-1.  **Clone o repositório:**
+1.  **Clone the repository:**
     ```bash
     git clone [https://github.com/MBDomingues/FORTINITE_PROJECT.git](https://github.com/MBDomingues/FORTINITE_PROJECT.git)
     cd FORTINITE_PROJECT
     ```
 
-2.  **Inicie a aplicação:**
-    Este comando irá baixar as imagens (Oracle e Java), compilar o projeto e iniciar os containers.
-    *A primeira execução pode demorar alguns minutos devido ao download do Oracle.*
+2.  **Start the application:**
+    This command will download the images (Oracle and Java), build the project and start the containers.
+    *The first run may take a few minutes due to the Oracle download.*
     ```bash
     docker-compose up --build
     ```
 
-3.  **Aguarde a Inicialização:**
-    * Acompanhe os logs. O Oracle levará um tempo para ficar "Healthy".
-    * Após a API iniciar, aguarde cerca de **30 segundos** para a sincronização inicial dos itens.
-    * Procure no log por: `SUCESSO: Sincronização base e status concluída`.
-    * Caso ocorra falha na sincronização inicial devido a problemas de hardware, realize a limpeza do container e reinicie a execução.
+3.  **Wait for Startup:**
+    * Follow the logs. Oracle will take some time to become "Healthy".
+    * After the API starts, wait about **30 seconds** for the initial item synchronization.
+    * Look in the log for: `SUCESSO: Sincronização base e status concluída` ("SUCCESS: Base and status synchronization completed").
+    * If the initial synchronization fails due to hardware issues, clean up the container and restart the run.
 
-4.  **Acesse:**
-    * **Frontend:** Abra a pasta `fortnite-frontend/index.html` (Recomendado usar Live Server do VS Code) ou ajuste a URL nos arquivos JavaScript para `localhost:8080`.
+4.  **Access:**
+    * **Frontend:** Open the `fortnite-frontend/index.html` folder (using VS Code's Live Server is recommended) or adjust the URL in the JavaScript files to `localhost:8080`.
     * **API (Swagger/JSON):** [http://localhost:8080/api/v1/cosmeticos](http://localhost:8080/api/v1/cosmeticos)
 
 ---
 
-## 🔌 Endpoints Principais
+## 🔌 Main Endpoints
 
-| Método | Rota | Descrição | Auth |
+| Method | Route | Description | Auth |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/auth/cadastro` | Cria um novo usuário (ganha 10k V-Bucks) | Pública |
-| `POST` | `/api/v1/auth/login` | Autentica e retorna Token JWT | Pública |
-| `GET` | `/api/v1/cosmeticos` | Lista cosméticos (filtros e paginação) | Pública |
-| `GET` | `/api/v1/perfis/me` | Retorna dados do usuário logado | **Token** |
-| `GET` | `/api/v1/perfis/me/historico` | Histórico de transações do usuário | **Token** |
+| `POST` | `/api/v1/auth/cadastro` | Creates a new user (gets 10k V-Bucks) | Public |
+| `POST` | `/api/v1/auth/login` | Authenticates and returns a JWT Token | Public |
+| `GET` | `/api/v1/cosmeticos` | Lists cosmetics (filters and pagination) | Public |
+| `GET` | `/api/v1/perfis/me` | Returns the logged-in user's data | **Token** |
+| `GET` | `/api/v1/perfis/me/historico` | User's transaction history | **Token** |
 
 ---
 
-**Desenvolvido por Mateus Domingues**
+**Developed by Mateus Domingues**
